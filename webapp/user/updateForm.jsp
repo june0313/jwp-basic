@@ -31,7 +31,7 @@
                     <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="${user.email}">
                 </div>
                 <button type="submit" class="btn btn-success clearfix pull-right">개인정보수정</button>
-                <div class="clearfix" />
+                <div class="clearfix"></div>
             </form>
         </div>
     </div>

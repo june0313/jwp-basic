@@ -12,6 +12,6 @@ public abstract class JdbcTemplate {
 		}
 	}
 
-	abstract protected void setValues(PreparedStatement ps) throws SQLException;
+	protected abstract void setValues(PreparedStatement ps) throws SQLException;
 
 }

@@ -1,15 +1,12 @@
 package next.dao;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
-import core.jdbc.ConnectionManager;
 import core.jdbc.JdbcTemplate;
+import core.jdbc.SelectJdbcTemplate;
 import next.model.User;
 
 public class UserDao {
@@ -37,40 +34,40 @@ public class UserDao {
 		}.update("UPDATE users SET password=?, name=?, email=? WHERE userId=?");
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<User> findAll() throws SQLException {
-		List<User> userList = Lists.newArrayList();
 		String sql = "SELECT userId, password, name, email FROM USERS";
 
-		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pstmt = con.prepareStatement(sql);
-				ResultSet resultSet = pstmt.executeQuery()) {
-
-			while (resultSet.next()) {
-				User user = new User(resultSet.getString("userId"), resultSet.getString("password"),
-						resultSet.getString("name"), resultSet.getString("email"));
-
-				userList.add(user);
+		SelectJdbcTemplate jdbcTemplate = new SelectJdbcTemplate() {
+			@Override
+			protected void setValues(PreparedStatement ps) throws SQLException {
 			}
-		}
 
-		return userList;
+			@Override
+			protected Object mapRow(ResultSet rs) throws SQLException {
+				return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
+			}
+		};
+
+		return (List<User>) jdbcTemplate.query(sql);
 	}
 
 	public User findByUserId(String userId) throws SQLException {
 		String sql = "SELECT userId, password, name, email FROM USERS WHERE userid=?";
 
-		try (Connection con = ConnectionManager.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql)) {
-			pstmt.setString(1, userId);
-			User user = null;
+		SelectJdbcTemplate jdbcTemplate = new SelectJdbcTemplate() {
 
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					user = new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),
-							rs.getString("email"));
-				}
+			@Override
+			protected void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, userId);
 			}
 
-			return user;
-		}
+			@Override
+			protected Object mapRow(ResultSet rs) throws SQLException {
+				return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
+			}
+		};
+
+		return (User) jdbcTemplate.queryForObject(sql);
 	}
 }

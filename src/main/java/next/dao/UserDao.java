@@ -6,68 +6,64 @@ import java.sql.SQLException;
 import java.util.List;
 
 import core.jdbc.JdbcTemplate;
-import core.jdbc.SelectJdbcTemplate;
+import core.jdbc.PreparedStatementSetter;
+import core.jdbc.RowMapper;
 import next.model.User;
 
 public class UserDao {
-	public void insert(User user) throws SQLException {
-		new JdbcTemplate() {
+	public void insert(User user) {
+		new JdbcTemplate().update("INSERT INTO USERS VALUES (?, ?, ?, ?)", new PreparedStatementSetter() {
 			@Override
-			protected void setValues(PreparedStatement ps) throws SQLException {
+			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setString(1, user.getUserId());
 				ps.setString(2, user.getPassword());
 				ps.setString(3, user.getName());
 				ps.setString(4, user.getEmail());
 			}
-		}.update("INSERT INTO USERS VALUES (?, ?, ?, ?)");
+		});
 	}
 
-	public void update(User user) throws SQLException {
-		new JdbcTemplate() {
+	public void update(User user) {
+		new JdbcTemplate().update("UPDATE users SET password=?, name=?, email=? WHERE userId=?", new PreparedStatementSetter() {
 			@Override
-			protected void setValues(PreparedStatement ps) throws SQLException {
+			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setString(1, user.getPassword());
 				ps.setString(2, user.getName());
 				ps.setString(3, user.getEmail());
 				ps.setString(4, user.getUserId());
 			}
-		}.update("UPDATE users SET password=?, name=?, email=? WHERE userId=?");
+		});
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<User> findAll() throws SQLException {
-		String sql = "SELECT userId, password, name, email FROM USERS";
+	public List<User> findAll() {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
-		SelectJdbcTemplate jdbcTemplate = new SelectJdbcTemplate() {
+		return (List<User>) jdbcTemplate.query("SELECT userId, password, name, email FROM USERS", new PreparedStatementSetter() {
 			@Override
-			protected void setValues(PreparedStatement ps) throws SQLException {
+			public void setValues(PreparedStatement ps) throws SQLException {
 			}
-
+		}, new RowMapper() {
 			@Override
-			protected Object mapRow(ResultSet rs) throws SQLException {
+			public Object mapRow(ResultSet rs) throws SQLException {
 				return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
 			}
-		};
-
-		return (List<User>) jdbcTemplate.query(sql);
+		});
 	}
 
-	public User findByUserId(String userId) throws SQLException {
-		String sql = "SELECT userId, password, name, email FROM USERS WHERE userid=?";
+	public User findByUserId(String userId) {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
-		SelectJdbcTemplate jdbcTemplate = new SelectJdbcTemplate() {
-
+		return (User) jdbcTemplate.queryForObject("SELECT userId, password, name, email FROM USERS WHERE userid=?", new PreparedStatementSetter() {
 			@Override
-			protected void setValues(PreparedStatement ps) throws SQLException {
+			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setString(1, userId);
 			}
-
+		}, new RowMapper() {
 			@Override
-			protected Object mapRow(ResultSet rs) throws SQLException {
+			public Object mapRow(ResultSet rs) throws SQLException {
 				return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
 			}
-		};
-
-		return (User) jdbcTemplate.queryForObject(sql);
+		});
 	}
 }

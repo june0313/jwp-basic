@@ -35,7 +35,6 @@ public class UserDao {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<User> findAll() {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
@@ -43,9 +42,9 @@ public class UserDao {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 			}
-		}, new RowMapper() {
+		}, new RowMapper<User>() {
 			@Override
-			public Object mapRow(ResultSet rs) throws SQLException {
+			public User mapRow(ResultSet rs) throws SQLException {
 				return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
 			}
 		});
@@ -54,14 +53,14 @@ public class UserDao {
 	public User findByUserId(String userId) {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
-		return (User) jdbcTemplate.queryForObject("SELECT userId, password, name, email FROM USERS WHERE userid=?", new PreparedStatementSetter() {
+		return jdbcTemplate.queryForObject("SELECT userId, password, name, email FROM USERS WHERE userid=?", new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setString(1, userId);
 			}
-		}, new RowMapper() {
+		}, new RowMapper<User>() {
 			@Override
-			public Object mapRow(ResultSet rs) throws SQLException {
+			public User mapRow(ResultSet rs) throws SQLException {
 				return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
 			}
 		});

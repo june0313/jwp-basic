@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcTemplate {
-	public void update(String query, PreparedStatementSetter pss) throws DataAccessException {
-		try (Connection con = ConnectionManager.getConnection(); PreparedStatement ps = con.prepareStatement(query)) {
+	public void update(String sql, PreparedStatementSetter pss) throws DataAccessException {
+		try (Connection con = ConnectionManager.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 			pss.setValues(ps);
 			ps.executeUpdate();
 		} catch (SQLException e) {

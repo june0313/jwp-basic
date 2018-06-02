@@ -1,6 +1,7 @@
 package next.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Question {
     private int id;
@@ -9,6 +10,7 @@ public class Question {
     private String contents;
     private Date createdDate;
     private int countOfAnswer;
+    private List<Answer> answers;
 
     public int getCountOfAnswer() {
         return countOfAnswer;
@@ -56,5 +58,13 @@ public class Question {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
     }
 }

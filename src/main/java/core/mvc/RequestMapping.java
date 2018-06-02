@@ -3,6 +3,7 @@ package core.mvc;
 import java.util.HashMap;
 import java.util.Map;
 
+import next.controller.question.QuestionDetailController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,16 +21,17 @@ public class RequestMapping {
     private Map<String, Controller> mappings = new HashMap<>();
 
     void initMapping() {
-        mappings.put("/", new HomeController());
-        mappings.put("/users/form", new ForwardController("/user/form.jsp"));
-        mappings.put("/users/loginForm", new ForwardController("/user/login.jsp"));
-        mappings.put("/users", new ListUserController());
-        mappings.put("/users/login", new LoginController());
-        mappings.put("/users/profile", new ProfileController());
-        mappings.put("/users/logout", new LogoutController());
-        mappings.put("/users/create", new CreateUserController());
-        mappings.put("/users/updateForm", new UpdateFormUserController());
-        mappings.put("/users/update", new UpdateUserController());
+        put("/", new HomeController());
+        put("/users/form", new ForwardController("/user/form.jsp"));
+        put("/users/loginForm", new ForwardController("/user/login.jsp"));
+        put("/users", new ListUserController());
+        put("/users/login", new LoginController());
+        put("/users/profile", new ProfileController());
+        put("/users/logout", new LogoutController());
+        put("/users/create", new CreateUserController());
+        put("/users/updateForm", new UpdateFormUserController());
+        put("/users/update", new UpdateUserController());
+        put("/questions/detail", new QuestionDetailController());
 
         logger.info("Initialized Request Mapping!");
     }

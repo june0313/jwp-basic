@@ -1,16 +1,20 @@
 package next.controller;
 
+import core.mvc.Controller;
+import core.mvc.ModelAndView;
+import core.mvc.View;
+import next.dao.QuestionDao;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import core.mvc.Controller;
-import next.dao.QuestionDao;
-
 public class HomeController implements Controller {
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        QuestionDao questionDao = new QuestionDao();
-        req.setAttribute("questions", questionDao.findAll());
-        return "home.jsp";
-    }
+	@Override
+	public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) {
+		QuestionDao questionDao = new QuestionDao();
+		ModelAndView modelAndView = new ModelAndView(View.createJspView("home.jsp"));
+		modelAndView.setAttribute("questions", questionDao.findAll());
+
+		return modelAndView;
+	}
 }
